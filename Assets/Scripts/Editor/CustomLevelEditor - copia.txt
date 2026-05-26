@@ -1,0 +1,82 @@
+using System;
+using UnityEditor;
+using UnityEngine;
+[CustomEditor(typeof(CustomLevel))]
+public class CustomLevelEditor : Editor
+{
+    CustomLevel level;
+    private Texture[] textures;
+
+
+
+    override public void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        DrawDefaultInspector();
+
+        if (textures == null)
+        {
+            textures = new Texture[14];
+            for (int i = 0; i < textures.Length; i++)
+                textures[i] = Resources.Load<Texture2DArray>($"TileEditor/tile{i}.png");
+        }
+        level = (CustomLevel)target;
+
+        DrawGrid();
+    }
+    private Texture GetTileTexture(int y, int x)
+    {
+        Texture texture = textures[0];
+        if (level.floorTiles[y,x])
+        {
+            texture= textures[((x + y) % 2) + 1];
+        }
+
+
+
+        return texture;
+    } 
+
+
+    private void DrawGrid()
+    {
+        try
+        {
+            GUILayout.BeginVertical();
+            for (int i = 0; i < level.height; i++)
+            {
+                GUILayout.BeginHorizontal();
+                
+                for (int j = 0; j < level.width; j++)
+                {
+                   
+                    if (GUILayout.Button(GetTileTexture(i,j), GUILayout.MaxWidth(50)))
+                    {
+                        PressedTile(i, j);
+                    }
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
+
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning(e);
+        }
+    }
+
+    public void PressedTile(int y, int x)
+    {
+        CustomLevel.SpecialTile specialTile = GetSpecial(y, x);
+        if ()
+        {
+
+        }
+    }
+
+    public CustomLevel.SpecialTile GetSpecial(int y, int x)
+    {
+
+    }
+}

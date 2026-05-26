@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ea14270f5346f4cab751d3de8126bf, type: 3}
+  m_Name: Level Rotation
+  m_EditorClassIdentifier: Assembly-CSharp::CustomLevel
+  designedMoves: 19
+  levelID: 54
+  width: 15
+  height: 10
+  startPosition: {x: 3, y: 3}
+  goalPosition: {x: 14, y: 4}
+  startingDots: 1
+  goalDots: 1
+  floorTiles: 000000000000000000000000000000000000010101010101010101000000000001010101010101010101000000000001010101010101010101000000000001010101010101010101000000000001010101000101010101000000000001010101010101010101000000000001010101010101010101000000000001010101010101010101000000000000000000000000000000000000
+  specialTiles:
+  - type: 6
+    position: {x: 6, y: 5}
+    value: 0
+    targets:
+    - {x: 13, y: 4}
+  - type: 3
+    position: {x: 13, y: 4}
+    value: 0
+    targets:
+    - {x: 6, y: 5}
+  - type: 6
+    position: {x: 2, y: 1}
+    value: 0
+    targets:
+    - {x: 12, y: 4}
+  - type: 3
+    position: {x: 12, y: 4}
+    value: 0
+    targets:
+    - {x: 2, y: 1}
+  - type: 7
+    position: {x: 7, y: 8}
+    value: 0
+    targets: []
+  - type: 7
+    position: {x: 11, y: 1}
+    value: 0
+    targets: []

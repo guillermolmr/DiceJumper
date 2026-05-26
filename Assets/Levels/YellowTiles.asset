@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ea14270f5346f4cab751d3de8126bf, type: 3}
+  m_Name: YellowTiles
+  m_EditorClassIdentifier: Assembly-CSharp::CustomLevel
+  designedMoves: 4
+  levelID: 51
+  width: 10
+  height: 10
+  startPosition: {x: 3, y: 2}
+  goalPosition: {x: 1, y: 3}
+  startingDots: 4
+  goalDots: -1
+  floorTiles: 00000000000000000000000000000000000000000000000001010101000000010000000000010000000100000000000100000001000000000001000000010000000000010000000101010101010100000000000000000000000000000000000000000000
+  specialTiles:
+  - type: 6
+    position: {x: 7, y: 2}
+    value: 0
+    targets:
+    - {x: 7, y: 3}
+    - {x: 7, y: 4}
+    - {x: 7, y: 5}
+    - {x: 7, y: 6}
+  - type: 3
+    position: {x: 7, y: 3}
+    value: 0
+    targets:
+    - {x: 7, y: 2}
+  - type: 3
+    position: {x: 7, y: 4}
+    value: 0
+    targets:
+    - {x: 7, y: 2}
+  - type: 3
+    position: {x: 7, y: 5}
+    value: 0
+    targets:
+    - {x: 7, y: 2}
+  - type: 3
+    position: {x: 7, y: 6}
+    value: 0
+    targets:
+    - {x: 7, y: 2}
+  - type: 6
+    position: {x: 1, y: 7}
+    value: 0
+    targets:
+    - {x: 1, y: 6}
+    - {x: 1, y: 5}
+    - {x: 1, y: 4}
+  - type: 3
+    position: {x: 1, y: 6}
+    value: 0
+    targets:
+    - {x: 1, y: 7}
+  - type: 3
+    position: {x: 1, y: 5}
+    value: 0
+    targets:
+    - {x: 1, y: 7}
+  - type: 3
+    position: {x: 1, y: 4}
+    value: 0
+    targets:
+    - {x: 1, y: 7}

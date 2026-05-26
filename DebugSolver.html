@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFS Visualizer</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-shadow: 0 0 10px #00d4ff44;
+        }
+
+        .input-section {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #0f3460;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #0d1b2a;
+            color: #a0ffb0;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        textarea:focus { outline: none; border-color: #00d4ff; }
+
+        button {
+            margin-top: 12px;
+            padding: 10px 30px;
+            background: #00d4ff;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: #00aacc; }
+
+        .error { color: #ff6b6b; margin-top: 10px; font-size: 14px; }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            padding: 14px 22px;
+            flex: 1;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .stat-card .label { font-size: 12px; color: #888; margin-bottom: 4px; }
+        .stat-card .value { font-size: 22px; font-weight: bold; color: #00d4ff; }
+        .stat-card.success .value { color: #00ff99; }
+        .stat-card.fail .value { color: #ff6b6b; }
+
+        .section-title {
+            color: #00d4ff;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #0f3460;
+            padding-bottom: 6px;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            color: #888;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #0f3460;
+            color: #00d4ff;
+            border-bottom-color: #0f3460;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* GRID TAB */
+        .grid-section {
+            background: #16213e;
+            border-radius: 0 12px 12px 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #0f3460;
+        }
+
+        .grid-layout {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .grid-container {
+            flex: 0 0 auto;
+        }
+
+        .grid-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .grid-controls label { color: #aaa; font-size: 13px; }
+
+        .grid-controls select {
+            background: #0d1b2a;
+            color: #e0e0e0;
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        .tile-grid {
+            display: grid;
+            gap: 2px;
+            border: 2px solid #0f3460;
+            border-radius: 6px;
+            padding: 4px;
+            background: #0d1b2a;
+        }
+
+        .tile {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            transition: border-color 0.15s, transform 0.1s;
+            user-select: none;
+        }
+
+        .tile:hover { border-color: #ffffff88; transform: scale(1.05); z-index: 10; }
+        .tile.selected { border-color: #fff !important; transform: scale(1.05); z-index: 10; }
+
+        .tile .tile-label {
+            font-size: 8px;
+            text-align: center;
+            line-height: 1.2;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 2px #000;
+            font-weight: bold;
+        }
+
+        .tile .tile-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .tile .tile-count {
+            position: absolute;
+            bottom: 2px;
+            right: 3px;
+            font-size: 8px;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 1px 2px #000;
+        }
+
+        .tile .path-dot {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ffd700;
+        }
+
+        /* TILE TYPE COLORS */
+        .tile-floor    { background: #1e3a4a; }
+        .tile-void     { background: #0a0a0a; }
+        .tile-start    { background: #0d4a1e; }
+        .tile-goal     { background: #4a3d0d; }
+        .tile-special-0 { background: #6a1a2a; }
+        .tile-special-1 { background: #1a2a6a; }
+        .tile-special-2 { background: #2a5a1a; }
+        .tile-special-3 { background: #5a1a5a; }
+        .tile-special-4 { background: #5a4a1a; }
+        .tile-special-5 { background: #1a5a5a; }
+
+        /* Visited overlay */
+        .tile.visited-light { box-shadow: inset 0 0 0 2px #00d4ff44; }
+        .tile.visited-medium { box-shadow: inset 0 0 0 2px #00d4ff88; }
+        .tile.visited-heavy { box-shadow: inset 0 0 0 2px #00d4ffcc; }
+
+        /* Jump arrows overlay */
+        .tile.jump-source { box-shadow: inset 0 0 0 3px #ff6b6b !important; }
+        .tile.jump-target { box-shadow: inset 0 0 0 3px #00ff99 !important; }
+        .tile.jump-target-selected { box-shadow: inset 0 0 0 3px #ffd700 !important; }
+
+        /* LEGEND */
+        .legend {
+            flex: 0 0 auto;
+            min-width: 200px;
+        }
+
+        .legend-title {
+            color: #00d4ff;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #ffffff33;
+            flex-shrink: 0;
+        }
+
+        /* SIDE PANEL */
+        .side-panel {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .panel-box {
+            background: #0d1b2a;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .panel-box h3 {
+            color: #00d4ff;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .node-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .node-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .node-item:hover { background: #0f2a3f; }
+        .node-item.selected-node { background: #1a1500; border-color: #ffd700; }
+
+        .node-item .n-idx { color: #00d4ff; font-weight: bold; min-width: 30px; }
+        .node-item .n-info { color: #aaa; }
+        .node-item .n-badge { 
+            font-size: 10px; 
+            padding: 1px 5px; 
+            border-radius: 8px;
+        }
+
+        .badge-start { background: #00ff9933; color: #00ff99; }
+        .badge-goal  { background: #ffd70033; color: #ffd700; }
+        .badge-path  { background: #00d4ff22; color: #00d4ff; }
+
+        .jump-list { }
+
+        .jump-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .jump-item:hover { background: #0f2a3f; }
+        .jump-item.selected-jump { background: #1a1500; border-color: #ffd700; }
+        .jump-item .j-arrow { color: #00d4ff; font-size: 14px; }
+        .jump-item .j-coords { color: #aaa; }
+        .jump-item .j-idx { color: #00ff99; font-weight: bold; min-width: 30px; }
+
+        .empty-hint {
+            color: #555;
+            font-size: 12px;
+            font-style: italic;
+            padding: 10px 0;
+        }
+
+        /* PATH SECTION */
+        .path-section {
+            background: #16213e;
+            border-radius: 0 12px 12px 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #0f3460;
+        }
+
+        .path-steps {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .path-step {
+            background: #0d1b2a;
+            border: 2px solid #00d4ff33;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            position: relative;
+            min-width: 110px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .path-step:hover { border-color: #00d4ff; background: #0f2a3f; }
+        .path-step.start { border-color: #00ff99; }
+        .path-step.goal { border-color: #ffd700; background: #1f1a00; }
+
+        .path-step .step-index { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .path-step .step-label { font-weight: bold; color: #00d4ff; font-size: 11px; margin-bottom: 4px; }
+        .path-step .coords { font-size: 11px; color: #aaa; }
+
+        .arrow { color: #00d4ff; font-size: 20px; flex-shrink: 0; }
+
+        /* TREE SECTION */
+        .tree-section {
+            background: #16213e;
+            border-radius: 0 12px 12px 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #0f3460;
+            overflow-x: auto;
+        }
+
+        .tree-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tree-controls input {
+            background: #0d1b2a;
+            color: #e0e0e0;
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            width: 180px;
+        }
+
+        .tree-controls input:focus { outline: none; border-color: #00d4ff; }
+
+        .tree-node { position: relative; padding: 4px 0; }
+
+        .tree-node-content {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d1b2a;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: border-color 0.2s;
+            user-select: none;
+        }
+
+        .tree-node-content:hover { border-color: #00d4ff; }
+        .tree-node-content.on-path { border-color: #ffd700; background: #1a1500; }
+        .tree-node-content.is-goal { border-color: #ffd700; background: #2a1f00; font-weight: bold; }
+        .tree-node-content.is-start { border-color: #00ff99; }
+
+        .tree-children {
+            margin-left: 30px;
+            border-left: 2px solid #0f3460;
+            padding-left: 16px;
+        }
+
+        .tree-children.collapsed { display: none; }
+
+        .toggle-btn { color: #00d4ff; font-size: 14px; width: 16px; text-align: center; }
+
+        .node-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
+
+        /* TABLE SECTION */
+        .table-section {
+            background: #16213e;
+            border-radius: 0 12px 12px 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #0f3460;
+            overflow-x: auto;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+
+        th {
+            background: #0f3460;
+            color: #00d4ff;
+            padding: 10px 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        td { padding: 8px 12px; border-bottom: 1px solid #0f346033; font-family: monospace; }
+        tr:hover td { background: #0f2a3f; }
+        tr.on-path td { background: #1a1500; color: #ffd700; }
+        tr.is-goal td { background: #2a1f00; color: #ffd700; font-weight: bold; }
+        tr.is-start td { color: #00ff99; }
+
+        .tooltip {
+            position: fixed;
+            background: #0d1b2a;
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 260px;
+            display: none;
+        }
+
+        .tooltip .t-row { margin-bottom: 4px; }
+        .tooltip .t-key { color: #888; margin-right: 6px; }
+        .tooltip .t-val { color: #00d4ff; font-family: monospace; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0d1b2a; }
+        ::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<h1>🔍 BFS Visualizer</h1>
+
+<div class="input-section">
+    <label>Paste your BFS JSON output here:</label>
+    <textarea id="jsonInput" placeholder='{"goalFound": true, ...}'></textarea>
+    <br>
+    <button onclick="parseAndRender()">Visualize</button>
+    <div class="error" id="errorMsg"></div>
+</div>
+
+<div id="output" style="display:none">
+    <div class="stats" id="statsBar"></div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('grid')">🗺️ Grid View</div>
+        <div class="tab" onclick="switchTab('path')">🏁 Goal Path</div>
+        <div class="tab" onclick="switchTab('tree')">🌳 BFS Tree</div>
+        <div class="tab" onclick="switchTab('table')">📋 All States</div>
+    </div>
+
+    <div class="tab-content active" id="tab-grid">
+        <div class="grid-section">
+            <div class="section-title">Grid Map</div>
+            <div class="grid-controls">
+                <label>Show overlay:</label>
+                <select id="overlayMode" onchange="refreshGrid()">
+                    <option value="visits">Visit count</option>
+                    <option value="path">Goal path only</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+            <div class="grid-layout">
+                <div class="grid-container">
+                    <div id="tileGrid" class="tile-grid"></div>
+                </div>
+                <div class="legend" id="legend"></div>
+                <div class="side-panel">
+                    <div class="panel-box">
+                        <h3>📍 Nodes at tile <span id="selectedTileLabel" style="color:#ffd700">— click a tile</span></h3>
+                        <div class="node-list" id="nodeList">
+                            <div class="empty-hint">Click a tile to see BFS nodes.</div>
+                        </div>
+                    </div>
+                    <div class="panel-box">
+                        <h3>↗️ Jumps from node <span id="selectedNodeLabel" style="color:#ffd700">—</span></h3>
+                        <div class="jump-list" id="jumpList">
+                            <div class="empty-hint">Select a node above to see its jumps.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-path">
+        <div class="path-section">
+            <div class="section-title">Goal Path (start → goal)</div>
+            <div id="pathDisplay"></div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-tree">
+        <div class="tree-section">
+            <div class="section-title">BFS Tree</div>
+            <div class="tree-controls">
+                <label style="color:#aaa; font-size:13px">Search node:</label>
+                <input type="number" id="searchNodeId" placeholder="Node index..." oninput="highlightSearchNode()">
+                <button onclick="expandAll()" style="font-size:12px; padding:6px 14px; margin-top:0">Expand All</button>
+                <button onclick="collapseAll()" style="font-size:12px; padding:6px 14px; margin-top:0">Collapse All</button>
+            </div>
+            <div id="treeDisplay"></div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-table">
+        <div class="table-section">
+            <div class="section-title">All States</div>
+            <div id="tableDisplay"></div>
+        </div>
+    </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+let globalData = null;
+let pathSet = new Set();
+let stateMap = {};
+let childrenMap = {};
+let tileNodesMap = {}; // "x,y" -> [nodeIndex, ...]
+let selectedTile = null;   // {x, y}
+let selectedNodeIdx = null;
+let selectedJumpIdx = null;
+// Add this with the other global variables at the top
+let nodeHistory = []; // stack of {tile, nodeIdx}
+
+// Add this new function alongside goBack()
+function goBackTo(historyIndex) {
+    if (historyIndex >= nodeHistory.length) return;
+    const prev = nodeHistory[historyIndex];
+    // Trim history up to that point
+    nodeHistory = nodeHistory.slice(0, historyIndex);
+    selectedTile = prev.tile;
+    selectedNodeIdx = prev.nodeIdx;
+    selectedJumpIdx = null;
+    refreshGrid();
+    if (selectedTile) renderNodeList(selectedTile.x, selectedTile.y);
+    renderJumpList();
+}
+// Special tile type colors & names
+const SPECIAL_COLORS = [
+    { bg: '#6a1a2a', border: '#ff6b6b', icon: '🔴', name: 'Special Type 0' },
+    { bg: '#1a2a6a', border: '#6b9fff', icon: '🔵', name: 'Special Type 1' },
+    { bg: '#2a5a1a', border: '#6bff6b', icon: '🟢', name: 'Special Type 2' },
+    { bg: '#5a1a5a', border: '#ff6bff', icon: '🟣', name: 'Special Type 3' },
+    { bg: '#5a4a1a', border: '#ffd700', icon: '🟡', name: 'Special Type 4' },
+    { bg: '#1a5a5a', border: '#6bffff', icon: '🩵', name: 'Special Type 5' },
+];
+
+function switchTab(name) {
+    const names = ['grid','path','tree','table'];
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', names[i] === name));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.toggle('active', tc.id === 'tab-' + name));
+}
+
+function parseAndRender() {
+    const raw = document.getElementById('jsonInput').value.trim();
+    const errEl = document.getElementById('errorMsg');
+    errEl.textContent = '';
+    try {
+        const data = JSON.parse(raw);
+        globalData = data;
+        stateMap = {};
+        childrenMap = {};
+        tileNodesMap = {};
+        data.states.forEach(s => {
+            stateMap[s.index] = s;
+            childrenMap[s.index] = [];
+            const key = s.x + ',' + s.y;
+            if (!tileNodesMap[key]) tileNodesMap[key] = [];
+            tileNodesMap[key].push(s.index);
+        });
+        data.states.forEach(s => {
+            if (s.parentIndex !== -1 && childrenMap[s.parentIndex] !== undefined)
+                childrenMap[s.parentIndex].push(s.index);
+        });
+        pathSet = buildPathSet(data);
+        selectedTile = null;
+        selectedNodeIdx = null;
+        selectedJumpIdx = null;
+
+        renderStats(data);
+        renderGrid(data);
+        renderPath(data);
+        renderTree(data);
+        renderTable(data);
+        document.getElementById('output').style.display = 'block';
+    } catch(e) {
+        errEl.textContent = '❌ Invalid JSON: ' + e.message;
+        document.getElementById('output').style.display = 'none';
+    }
+}
+
+function buildPathSet(data) {
+    const set = new Set();
+    if (!data.goalFound || data.goalStateIndex < 0) return set;
+    let cur = data.goalStateIndex;
+    while (cur !== -1) {
+        set.add(cur);
+        const node = stateMap[cur];
+        if (!node) break;
+        cur = node.parentIndex;
+    }
+    return set;
+}
+
+function getPathNodes(data) {
+    const path = [];
+    if (!data.goalFound || data.goalStateIndex < 0) return path;
+    let cur = data.goalStateIndex;
+    while (cur !== -1) {
+        const node = stateMap[cur];
+        if (!node) break;
+        path.unshift(node);
+        cur = node.parentIndex;
+    }
+    return path;
+}
+
+// ─── STATS ───────────────────────────────────────────────────────────────────
+function renderStats(data) {
+    const bar = document.getElementById('statsBar');
+    const pathLen = data.goalFound ? getPathNodes(data).length : 0;
+    bar.innerHTML = `
+        <div class="stat-card ${data.goalFound ? 'success' : 'fail'}">
+            <div class="label">Goal Found</div>
+            <div class="value">${data.goalFound ? '✅ Yes' : '❌ No'}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Visited</div>
+            <div class="value">${data.totalVisited}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total States</div>
+            <div class="value">${data.states.length}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Goal State Index</div>
+            <div class="value">${data.goalStateIndex >= 0 ? data.goalStateIndex : '—'}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Path Length</div>
+            <div class="value">${data.goalFound ? pathLen + ' steps' : '—'}</div>
+        </div>
+    `;
+}
+
+// ─── GRID ────────────────────────────────────────────────────────────────────
+function getSpecialTileAt(x, y) {
+    const ld = globalData.levelData;
+    if (!ld || !ld.specialTiles) return null;
+    return ld.specialTiles.find(st => st.position && st.position.x === x && st.position.y === y) || null;
+}
+
+function isFloor(x, y) {
+    const ld = globalData.levelData;
+    if (!ld || !ld.floorTiles) return false;
+    const idx = y * ld.width + x;
+    return !!ld.floorTiles[idx];
+}
+
+function renderGrid(data) {
+    const ld = data.levelData;
+    if (!ld) {
+        document.getElementById('tileGrid').innerHTML = '<div style="color:#ff6b6b">No levelData found.</div>';
+        return;
+    }
+    refreshGrid();
+    renderLegend(data);
+}
+
+function refreshGrid() {
+    const data = globalData;
+    const ld = data.levelData;
+    if (!ld) return;
+
+    const grid = document.getElementById('tileGrid');
+    grid.style.gridTemplateColumns = `repeat(${ld.width}, 48px)`;
+    grid.style.gridTemplateRows = `repeat(${ld.height}, 48px)`;
+    grid.innerHTML = '';
+
+    const overlay = document.getElementById('overlayMode').value;
+    const maxVisits = Math.max(1, ...Object.values(tileNodesMap).map(a => a.length));
+
+    // Compute path tile set
+    const pathTiles = new Set();
+    getPathNodes(data).forEach(n => pathTiles.add(n.x + ',' + n.y));
+
+    // Jump targets from selected node
+    const jumpTargetSet = new Set();
+    const selectedJumpTarget = null;
+    if (selectedNodeIdx !== null) {
+        const children = childrenMap[selectedNodeIdx] || [];
+        children.forEach(ci => {
+            const cn = stateMap[ci];
+            if (cn) jumpTargetSet.add(cn.x + ',' + cn.y + ',' + ci);
+        });
+    }
+
+    for (let y = ld.height - 1; y >= 0; y--) {
+        for (let x = 0; x < ld.width; x++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.dataset.x = x;
+            tile.dataset.y = y;
+
+            const floor = isFloor(x, y);
+            const special = getSpecialTileAt(x, y);
+            const isStart = ld.startPosition && ld.startPosition.x === x && ld.startPosition.y === y;
+            const isGoal  = ld.goalPosition  && ld.goalPosition.x  === x && ld.goalPosition.y  === y;
+            const key = x + ',' + y;
+            const nodeCount = (tileNodesMap[key] || []).length;
+            const onPath = pathTiles.has(key);
+
+            // Base color
+            if (!floor) {
+                tile.classList.add('tile-void');
+            } else if (special) {
+                const typeIdx = (special.type !== undefined ? special.type : 0) % SPECIAL_COLORS.length;
+                tile.style.background = SPECIAL_COLORS[typeIdx].bg;
+                tile.style.borderColor = SPECIAL_COLORS[typeIdx].border + '88';
+            } else if (isStart) {
+                tile.classList.add('tile-start');
+            } else if (isGoal) {
+                tile.classList.add('tile-goal');
+            } else {
+                tile.classList.add('tile-floor');
+            }
+
+            // Overlay
+            if (floor && overlay === 'visits' && nodeCount > 0) {
+                const ratio = nodeCount / maxVisits;
+                const alpha = 0.15 + ratio * 0.55;
+                tile.style.boxShadow = `inset 0 0 0 3px rgba(0,212,255,${alpha})`;
+            } else if (floor && overlay === 'path' && onPath) {
+                tile.style.boxShadow = 'inset 0 0 0 3px rgba(255,215,0,0.7)';
+            }
+
+            // Jump overlays
+            if (selectedNodeIdx !== null) {
+                const selNode = stateMap[selectedNodeIdx];
+                if (selNode && selNode.x === x && selNode.y === y) {
+                    tile.style.boxShadow = 'inset 0 0 0 3px #ff6b6b';
+                }
+                // Check if any child lands here
+                const matchedChildren = (childrenMap[selectedNodeIdx] || []).filter(ci => {
+                    const cn = stateMap[ci];
+                    return cn && cn.x === x && cn.y === y;
+                });
+                if (matchedChildren.length > 0) {
+                    tile.style.boxShadow = 'inset 0 0 0 3px #00ff99';
+                }
+                // Highlight selected jump specifically
+                if (selectedJumpIdx !== null) {
+                    const jn = stateMap[selectedJumpIdx];
+                    if (jn && jn.x === x && jn.y === y) {
+                        tile.style.boxShadow = 'inset 0 0 0 3px #ffd700';
+                    }
+                }
+            }
+
+            // Selected tile highlight
+            if (selectedTile && selectedTile.x === x && selectedTile.y === y) {
+                tile.classList.add('selected');
+            }
+
+            // Icon
+            let icon = '', label = '';
+            if (!floor) { icon = ''; label = ''; }
+            else if (isStart) { icon = '🟢'; label = 'START'; }
+            else if (isGoal)  { icon = '🏆'; label = 'GOAL'; }
+            else if (special) {
+                const typeIdx = (special.type !== undefined ? special.type : 0) % SPECIAL_COLORS.length;
+                icon = SPECIAL_COLORS[typeIdx].icon;
+            }
+
+            tile.innerHTML = `
+                ${onPath && overlay !== 'path' ? '<div class="path-dot"></div>' : ''}
+                <div class="tile-icon">${icon}</div>
+                ${label ? `<div class="tile-label">${label}</div>` : ''}
+                ${floor && nodeCount > 0 ? `<div class="tile-count">${nodeCount}</div>` : ''}
+            `;
+
+            if (floor) {
+                tile.addEventListener('click', () => onTileClick(x, y));
+                tile.addEventListener('mouseenter', (e) => showTileTooltip(e, x, y));
+                tile.addEventListener('mouseleave', hideTooltip);
+            }
+
+            grid.appendChild(tile);
+        }
+    }
+}
+
+function onTileClick(x, y) {
+    selectedTile = { x, y };
+    selectedNodeIdx = null;
+    selectedJumpIdx = null;
+    nodeHistory = []; // reset history on fresh tile click
+    refreshGrid();
+    renderNodeList(x, y);
+    renderJumpList();
+}
+
+function renderNodeList(x, y) {
+    const key = x + ',' + y;
+    const nodes = tileNodesMap[key] || [];
+    const label = document.getElementById('selectedTileLabel');
+    label.textContent = `(${x}, ${y}) — ${nodes.length} node(s)`;
+
+    const list = document.getElementById('nodeList');
+    if (nodes.length === 0) {
+        list.innerHTML = '<div class="empty-hint">No BFS nodes visited this tile.</div>';
+        return;
+    }
+
+    list.innerHTML = nodes.map(ni => {
+        const n = stateMap[ni];
+        const isStart = n.parentIndex === -1;
+        const isGoal = ni === globalData.goalStateIndex;
+        const onPath = pathSet.has(ni);
+        let badges = '';
+        if (isStart) badges += '<span class="n-badge badge-start">START</span>';
+        if (isGoal)  badges += '<span class="n-badge badge-goal">GOAL</span>';
+        else if (onPath) badges += '<span class="n-badge badge-path">PATH</span>';
+
+        return `<div class="node-item ${selectedNodeIdx === ni ? 'selected-node' : ''}" onclick="onNodeSelect(${ni})">
+            <span class="n-idx">#${ni}</span>
+            <span class="n-info">top:${n.top} p:${n.parentIndex === -1 ? '—' : n.parentIndex}</span>
+            ${badges}
+        </div>`;
+    }).join('');
+}
+
+function onNodeSelect(nodeIdx) {
+    selectedNodeIdx = nodeIdx;
+    selectedJumpIdx = null;
+    refreshGrid();
+    // Re-render node list to update selection
+    if (selectedTile) renderNodeList(selectedTile.x, selectedTile.y);
+    renderJumpList();
+}
+
+function renderJumpList() {
+    const label = document.getElementById('selectedNodeLabel');
+    const list = document.getElementById('jumpList');
+
+    if (selectedNodeIdx === null) {
+        label.textContent = '—';
+        list.innerHTML = '<div class="empty-hint">Select a node above to see its jumps.</div>';
+        return;
+    }
+
+    label.textContent = '#' + selectedNodeIdx;
+    const children = childrenMap[selectedNodeIdx] || [];
+    const selNode = stateMap[selectedNodeIdx];
+
+    if (children.length === 0) {
+        list.innerHTML = '<div class="empty-hint">No children (leaf node).</div>';
+        return;
+    }
+
+    list.innerHTML = children.map(ci => {
+        const cn = stateMap[ci];
+        const isGoal = ci === globalData.goalStateIndex;
+        const onPath = pathSet.has(ci);
+        const dx = cn.x - selNode.x;
+        const dy = cn.y - selNode.y;
+        const dirStr = `Δ(${dx >= 0 ? '+' : ''}${dx}, ${dy >= 0 ? '+' : ''}${dy})`;
+        let badge = '';
+        if (isGoal) badge = '<span class="n-badge badge-goal">GOAL</span>';
+        else if (onPath) badge = '<span class="n-badge badge-path">PATH</span>';
+
+        return `<div class="jump-item ${selectedJumpIdx === ci ? 'selected-jump' : ''}" onclick="onJumpSelect(${ci})">
+            <span class="j-arrow">↗</span>
+            <span class="j-idx">#${ci}</span>
+            <span class="j-coords">(${cn.x},${cn.y}) ${dirStr} top:${cn.top}</span>
+            ${badge}
+        </div>`;
+    }).join('');
+}
+
+function onJumpSelect(jumpNodeIdx) {
+    selectedJumpIdx = jumpNodeIdx;
+
+    // Push current node to history before moving
+    if (selectedNodeIdx !== null) {
+        nodeHistory.push({ 
+            tile: selectedTile ? { ...selectedTile } : null, 
+            nodeIdx: selectedNodeIdx 
+        });
+    }
+
+    // Move to the jumped node
+    const jumpedNode = stateMap[jumpNodeIdx];
+    if (jumpedNode) {
+        selectedTile = { x: jumpedNode.x, y: jumpedNode.y };
+        selectedNodeIdx = jumpNodeIdx;
+        selectedJumpIdx = null;
+    }
+
+    refreshGrid();
+    if (selectedTile) renderNodeList(selectedTile.x, selectedTile.y);
+    renderJumpList();
+}
+function goBack() {
+    if (nodeHistory.length === 0) return;
+    const prev = nodeHistory.pop();
+    selectedTile = prev.tile;
+    selectedNodeIdx = prev.nodeIdx;
+    selectedJumpIdx = null;
+    refreshGrid();
+    if (selectedTile) renderNodeList(selectedTile.x, selectedTile.y);
+    renderJumpList();
+}
+
+function renderJumpList() {
+    const label = document.getElementById('selectedNodeLabel');
+    const list = document.getElementById('jumpList');
+
+    if (selectedNodeIdx === null) {
+        label.textContent = '—';
+        list.innerHTML = '<div class="empty-hint">Select a node above to see its jumps.</div>';
+        return;
+    }
+
+    label.textContent = '#' + selectedNodeIdx;
+    const children = childrenMap[selectedNodeIdx] || [];
+    const selNode = stateMap[selectedNodeIdx];
+
+    // Back button
+    const backBtn = nodeHistory.length > 0
+        ? `<button onclick="goBack()" style="font-size:11px; padding:4px 10px; margin-bottom:8px; margin-top:0">
+               ← Back to #${nodeHistory[nodeHistory.length - 1].nodeIdx}
+           </button>`
+        : '';
+
+    // Breadcrumb trail
+    const breadcrumb = nodeHistory.length > 0
+        ? `<div style="font-size:10px; color:#555; margin-bottom:8px; word-break:break-all;">
+               ${nodeHistory.map((h, i) => 
+                   `<span style="cursor:pointer; color:#00d4ff88;" onclick="goBackTo(${i})">#${h.nodeIdx}</span>`
+               ).join(' → ')} → <span style="color:#ffd700">#${selectedNodeIdx}</span>
+           </div>`
+        : '';
+
+    if (children.length === 0) {
+        list.innerHTML = backBtn + breadcrumb + '<div class="empty-hint">No children (leaf node).</div>';
+        return;
+    }
+
+    const items = children.map(ci => {
+        const cn = stateMap[ci];
+        const isGoal = ci === globalData.goalStateIndex;
+        const onPath = pathSet.has(ci);
+        const dx = cn.x - selNode.x;
+        const dy = cn.y - selNode.y;
+        const dirStr = `Δ(${dx >= 0 ? '+' : ''}${dx}, ${dy >= 0 ? '+' : ''}${dy})`;
+        let badge = '';
+        if (isGoal) badge = '<span class="n-badge badge-goal">GOAL</span>';
+        else if (onPath) badge = '<span class="n-badge badge-path">PATH</span>';
+
+        return `<div class="jump-item ${selectedJumpIdx === ci ? 'selected-jump' : ''}" onclick="onJumpSelect(${ci})">
+            <span class="j-arrow">↗</span>
+            <span class="j-idx">#${ci}</span>
+            <span class="j-coords">(${cn.x},${cn.y}) ${dirStr} top:${cn.top}</span>
+            ${badge}
+        </div>`;
+    }).join('');
+
+    list.innerHTML = backBtn + breadcrumb + items;
+}
+function renderLegend(data) {
+    const ld = data.levelData;
+    const el = document.getElementById('legend');
+
+    // Collect used special types
+    const usedTypes = new Set();
+    if (ld.specialTiles) {
+        ld.specialTiles.forEach(st => usedTypes.add(st.type !== undefined ? st.type % SPECIAL_COLORS.length : 0));
+    }
+
+    let html = '<div class="legend-title">Legend</div>';
+
+    const items = [
+        { color: '#1e3a4a', border: '#0f3460', label: 'Floor tile' },
+        { color: '#0a0a0a', border: '#333', label: 'Void / wall' },
+        { color: '#0d4a1e', border: '#00ff99', label: 'Start position' },
+        { color: '#4a3d0d', border: '#ffd700', label: 'Goal position' },
+    ];
+
+    items.forEach(item => {
+        html += `<div class="legend-item">
+            <div class="legend-color" style="background:${item.color}; border-color:${item.border}"></div>
+            <span>${item.label}</span>
+        </div>`;
+    });
+
+    usedTypes.forEach(t => {
+        const sc = SPECIAL_COLORS[t];
+        html += `<div class="legend-item">
+            <div class="legend-color" style="background:${sc.bg}; border-color:${sc.border}"></div>
+            <span>${sc.icon} ${sc.name}</span>
+        </div>`;
+    });
+
+    html += '<div style="height:8px"></div><div class="legend-title">Overlays</div>';
+    html += `<div class="legend-item"><div class="legend-color" style="background:#1e3a4a; box-shadow: inset 0 0 0 3px rgba(0,212,255,0.7)"></div><span>Visited (darker = more)</span></div>`;
+    html += `<div class="legend-item"><div style="width:20px;height:20px;border-radius:4px;background:#1e3a4a;box-shadow:inset 0 0 0 3px #ffd700;flex-shrink:0"></div><span>🟡 On goal path</span></div>`;
+    html += `<div class="legend-item"><div style="width:7px;height:7px;border-radius:50%;background:#ffd700;flex-shrink:0;margin:6px 6px 6px 6px"></div><span>Dot = path tile</span></div>`;
+    html += '<div style="height:8px"></div><div class="legend-title">Selection</div>';
+    html += `<div class="legend-item"><div class="legend-color" style="background:#1e3a4a; box-shadow: inset 0 0 0 3px #ff6b6b"></div><span>🔴 Selected node tile</span></div>`;
+    html += `<div class="legend-item"><div class="legend-color" style="background:#1e3a4a; box-shadow: inset 0 0 0 3px #00ff99"></div><span>🟢 Jump target(s)</span></div>`;
+    html += `<div class="legend-item"><div class="legend-color" style="background:#1e3a4a; box-shadow: inset 0 0 0 3px #ffd700"></div><span>🟡 Selected jump target</span></div>`;
+
+    if (ld.startingDots !== undefined || ld.goalDots !== undefined) {
+        html += `<div style="height:8px"></div><div class="legend-title">Level Info</div>`;
+        if (ld.startingDots !== undefined) html += `<div class="legend-item"><span>Starting dots: <b style="color:#00d4ff">${ld.startingDots}</b></span></div>`;
+        if (ld.goalDots !== undefined) html += `<div class="legend-item"><span>Goal dots: <b style="color:#ffd700">${ld.goalDots}</b></span></div>`;
+        html += `<div class="legend-item"><span>Grid: <b style="color:#00d4ff">${ld.width} × ${ld.height}</b></span></div>`;
+    }
+
+    el.innerHTML = html;
+}
+
+// ─── TILE TOOLTIP ─────────────────────────────────────────────────────────────
+function showTileTooltip(e, x, y) {
+    const key = x + ',' + y;
+    const nodes = tileNodesMap[key] || [];
+    const ld = globalData.levelData;
+    const special = getSpecialTileAt(x, y);
+    const isStart = ld.startPosition && ld.startPosition.x === x && ld.startPosition.y === y;
+    const isGoal  = ld.goalPosition  && ld.goalPosition.x  === x && ld.goalPosition.y  === y;
+    const tt = document.getElementById('tooltip');
+    const pathNodes = nodes.filter(ni => pathSet.has(ni));
+
+    tt.innerHTML = `
+        <div class="t-row"><span class="t-key">Tile:</span><span class="t-val">(${x}, ${y})</span></div>
+        <div class="t-row"><span class="t-key">Type:</span><span class="t-val">${isStart ? 'Start' : isGoal ? 'Goal' : special ? 'Special (type '+special.type+')' : 'Floor'}</span></div>
+        <div class="t-row"><span class="t-key">BFS visits:</span><span class="t-val">${nodes.length}</span></div>
+        <div class="t-row"><span class="t-key">On path:</span><span class="t-val">${pathNodes.length > 0 ? '✅ Yes ('+pathNodes.length+' nodes)' : 'No'}</span></div>
+    `;
+    tt.style.display = 'block';
+    moveTip(e);
+}
+
+// ─── PATH VIEW ───────────────────────────────────────────────────────────────
+function renderPath(data) {
+    const el = document.getElementById('pathDisplay');
+    if (!data.goalFound) {
+        el.innerHTML = '<p style="color:#ff6b6b; padding:20px">No goal was found.</p>';
+        return;
+    }
+    const path = getPathNodes(data);
+    if (path.length === 0) { el.innerHTML = '<p style="color:#ff6b6b">Could not reconstruct path.</p>'; return; }
+
+    const stepsHtml = path.map((node, i) => {
+        const isStart = node.parentIndex === -1;
+        const isGoal = node.index === data.goalStateIndex;
+        let cls = 'path-step' + (isStart ? ' start' : '') + (isGoal ? ' goal' : '');
+        return `
+            <div class="${cls}">
+                <div class="step-index">Step ${i} • Node #${node.index}</div>
+                <div class="step-label">${isStart ? '🟢 START' : ''}${isGoal ? '🏆 GOAL' : ''}</div>
+                <div class="coords">📍 (${node.x}, ${node.y})</div>
+                <div class="coords">⬆ top: ${node.top}</div>
+            </div>
+            ${i < path.length - 1 ? '<div class="arrow">→</div>' : ''}
+        `;
+    }).join('');
+
+    el.innerHTML = `<div class="path-steps">${stepsHtml}</div>`;
+}
+
+// ─── TREE VIEW ───────────────────────────────────────────────────────────────
+function renderTree(data) {
+    const el = document.getElementById('treeDisplay');
+    const roots = data.states.filter(s => s.parentIndex === -1).map(s => s.index);
+
+    function buildNode(idx) {
+        const node = stateMap[idx];
+        if (!node) return '';
+        const isGoal = idx === data.goalStateIndex;
+        const isStart = node.parentIndex === -1;
+        const onPath = pathSet.has(idx);
+        const kids = childrenMap[idx] || [];
+        const hasKids = kids.length > 0;
+
+        let contentCls = 'tree-node-content' + (onPath ? ' on-path' : '') + (isGoal ? ' is-goal' : '') + (isStart ? ' is-start' : '');
+        const badges = [];
+        if (isStart) badges.push('<span class="node-badge badge-start">START</span>');
+        if (isGoal)  badges.push('<span class="node-badge badge-goal">GOAL</span>');
+        else if (onPath) badges.push('<span class="node-badge badge-path">PATH</span>');
+
+        const toggle = hasKids ? `<span class="toggle-btn" onclick="toggleNode(this)">▼</span>` : `<span class="toggle-btn" style="visibility:hidden">▼</span>`;
+        const childrenHtml = hasKids ? `<div class="tree-children">${kids.map(buildNode).join('')}</div>` : '';
+
+        return `
+            <div class="tree-node" data-index="${idx}">
+                <div class="${contentCls}" onmouseenter="showNodeTooltip(event, ${idx})" onmouseleave="hideTooltip()">
+                    ${toggle}
+                    <span style="color:#555; font-size:11px">#${idx}</span>
+                    <span style="color:#aaa">(${node.x}, ${node.y}) top:${node.top}</span>
+                    ${badges.join('')}
+                </div>
+                ${childrenHtml}
+            </div>`;
+    }
+    el.innerHTML = roots.map(buildNode).join('');
+}
+
+function toggleNode(btn) {
+    const nodeDiv = btn.closest('.tree-node');
+    const childrenDiv = nodeDiv.querySelector(':scope > .tree-children');
+    if (!childrenDiv) return;
+    btn.textContent = childrenDiv.classList.toggle('collapsed') ? '▶' : '▼';
+}
+
+function expandAll() {
+    document.querySelectorAll('.tree-children').forEach(el => el.classList.remove('collapsed'));
+    document.querySelectorAll('.toggle-btn').forEach(b => { if (b.textContent === '▶') b.textContent = '▼'; });
+}
+
+function collapseAll() {
+    document.querySelectorAll('.tree-children').forEach(el => el.classList.add('collapsed'));
+    document.querySelectorAll('.toggle-btn').forEach(b => { if (b.textContent === '▼') b.textContent = '▶'; });
+}
+
+function highlightSearchNode() {
+    const val = parseInt(document.getElementById('searchNodeId').value);
+    document.querySelectorAll('.tree-node-content').forEach(el => el.style.outline = '');
+    if (isNaN(val)) return;
+    const target = document.querySelector(`.tree-node[data-index="${val}"] > .tree-node-content`);
+    if (target) {
+        target.style.outline = '2px solid #ff6b6b';
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        let parent = target.closest('.tree-node')?.parentElement?.closest('.tree-node');
+        while (parent) {
+            const ch = parent.querySelector(':scope > .tree-children');
+            if (ch) { ch.classList.remove('collapsed'); const btn = parent.querySelector(':scope > .tree-node-content .toggle-btn'); if (btn) btn.textContent = '▼'; }
+            parent = parent.parentElement?.closest('.tree-node');
+        }
+    }
+}
+
+// ─── TABLE ───────────────────────────────────────────────────────────────────
+function renderTable(data) {
+    const el = document.getElementById('tableDisplay');
+    const rows = data.states.map(s => {
+        const isGoal = s.index === data.goalStateIndex;
+        const isStart = s.parentIndex === -1;
+        const onPath = pathSet.has(s.index);
+        let cls = isGoal ? 'is-goal' : onPath ? 'on-path' : isStart ? 'is-start' : '';
+        return `<tr class="${cls}">
+            <td>${s.index}</td>
+            <td>${s.parentIndex === -1 ? '— (root)' : s.parentIndex}</td>
+            <td>${s.x}</td>
+            <td>${s.y}</td>
+            <td>${s.top}</td>
+            <td>${s.yellowMask}</td>
+            <td>${s.glassMask}</td>
+            <td>${isStart ? '🟢 Start' : ''}${isGoal ? '🏆 Goal' : ''}${onPath && !isStart && !isGoal ? '→ Path' : ''}</td>
+        </tr>`;
+    }).join('');
+    el.innerHTML = `<table>
+        <thead><tr><th>Index</th><th>Parent</th><th>X</th><th>Y</th><th>Top</th><th>Yellow Mask</th><th>Glass Mask</th><th>Role</th></tr></thead>
+        <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ─── TOOLTIPS ─────────────────────────────────────────────────────────────────
+function showNodeTooltip(e, idx) {
+    const node = stateMap[idx];
+    if (!node) return;
+    const tt = document.getElementById('tooltip');
+    tt.innerHTML = `
+        <div class="t-row"><span class="t-key">Index:</span><span class="t-val">${node.index}</span></div>
+        <div class="t-row"><span class="t-key">Parent:</span><span class="t-val">${node.parentIndex === -1 ? 'none' : node.parentIndex}</span></div>
+        <div class="t-row"><span class="t-key">Position:</span><span class="t-val">(${node.x}, ${node.y})</span></div>
+        <div class="t-row"><span class="t-key">Top:</span><span class="t-val">${node.top}</span></div>
+        <div class="t-row"><span class="t-key">On path:</span><span class="t-val">${pathSet.has(idx) ? '✅' : 'No'}</span></div>
+    `;
+    tt.style.display = 'block';
+    moveTip(e);
+}
+
+function moveTip(e) {
+    const tt = document.getElementById('tooltip');
+    tt.style.left = (e.clientX + 16) + 'px';
+    tt.style.top  = (e.clientY + 16) + 'px';
+}
+
+function hideTooltip() {
+    document.getElementById('tooltip').style.display = 'none';
+}
+
+document.addEventListener('mousemove', e => {
+    const tt = document.getElementById('tooltip');
+    if (tt.style.display === 'block') moveTip(e);
+});
+</script>
+</body>
+</html>

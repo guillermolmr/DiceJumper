@@ -1,0 +1,425 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ea14270f5346f4cab751d3de8126bf, type: 3}
+  m_Name: Level 63
+  m_EditorClassIdentifier: Assembly-CSharp::CustomLevel
+  designedMoves: 4
+  levelID: 62
+  bestSteps: 05000000040000000500000006000000
+  width: 18
+  height: 18
+  startPosition: {x: 8, y: 9}
+  goalPosition: {x: 9, y: 8}
+  startingDots: 6
+  goalDots: -1
+  floorTiles: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010101010101010101010101000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010000000000000000000001000000000000010101010101010101010101000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  specialTiles:
+  - type: 9
+    position: {x: 9, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 13}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 12}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 11}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 10}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 9}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 8}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 7}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 13, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 4}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 4, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 6}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 12, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 11, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 10, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 9, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 8, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 7, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 6, y: 5}
+    value: 0
+    targets: []
+  - type: 9
+    position: {x: 5, y: 5}
+    value: 0
+    targets: []
